@@ -52,6 +52,21 @@ class iOTA():
         pos = p.getBasePositionAndOrientation(self.id, physicsClientId=self.pClient)[0]
         return sqrt((target[0]-pos[0])**2 + (target[1]-pos[1])**2)
 
+    def low_control(self,vel_arr):
+        '''
+        This function controls the motor directly with the array of velocities
+        Expected input vel_arr = [right_front_wheel_velocity, right_back_wheel_velocity, left_front_wheel_velocity, left_back_wheel_velocity]
+        '''
+        for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):               ## Iterating over wheels
+            for j,wheel in enumerate(wheel_set):
+                p.setJointMotorControl2(self.id,
+                                        wheel,
+                                        controlMode=p.VELOCITY_CONTROL,
+                                        targetVelocity=self.signum_fn(vel_arr[ i*2 + j ]),
+                                        force=100,
+                                        physicsClientId=self.pClient)               ## Applying torque
+        return True
+
     def control(self,vel_vec):
         '''
         Low level Control algorithm which works on proportional drive with R and theta as there state parameters, it takes in the desired Velocity vector
@@ -79,6 +94,18 @@ class iOTA():
             return True
         else:
             return False
+
+    def set_point(self):
+        '''
+        This sets the set goal that the planning algorithm will generate the trajectory for
+        '''
+        return True
+
+    def plan(self):
+        '''
+        This will return a velocity vector in the direction of the trajectory that is to be followed
+        '''
+        return [0,0]
 
     def signum_fn(self,val):
         '''
