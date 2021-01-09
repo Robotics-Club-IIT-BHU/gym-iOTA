@@ -37,12 +37,17 @@ class iOTA():
                             physicsClientId=self.pClient)       ## Spawning it with the given parameters
         self.dockees = []                                       ## This stores all the docked members to the given bot (Self)
         self.constraints = []                                   ## This stores all the docking constraints
+
         self.control = self.control_proportional                ## This way we can set the control algorithm we want to use on the bot
         ## Basic Structure of any control algorithm is that it should take a velocity vector towards which the bot should move, and should return True if reached the setpoint
         ## Baseline :- control_proportional
         self.plan = self.plan_vanilla                           ## This way we can set the path planning algorithm we want to use on the bot
         ## Basic Structure of any planning algorithm is that it doesnt take any arguement and return a velocity vector towards the next point on the trajectory
         ## Baseline :- plan_vanilla
+        self.get_pos = self.simulator_api_position              ## This way we can set the positioning algorithm that we want to use on the bot
+        ## Basic Structure of any planning algorithm is that it takes no arguement and returns (x_coordinate, y_coordinate, z_coordinate ), (x, y, z, w)
+        ## Baseline :- simulator_api_position
+
     def init_pos(self):
         '''
         Random initialization of the bot within the arena limits
@@ -62,14 +67,14 @@ class iOTA():
     def low_control(self,vel_arr):
         '''
         This function controls the motor directly with the array of velocities
-        Expected input vel_arr = [right_front_wheel_velocity, right_back_wheel_velocity, left_front_wheel_velocity, left_back_wheel_velocity]
+        Expected input vel_arr = [right_front_wheel_velocity, left_front_wheel_velocity, right_back_wheel_velocity, left_back_wheel_velocity]
         '''
         for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):               ## Iterating over wheels
             for j,wheel in enumerate(wheel_set):
                 p.setJointMotorControl2(self.id,
                                         wheel,
                                         controlMode=p.VELOCITY_CONTROL,
-                                        targetVelocity=self.signum_fn(vel_arr[ i*2 + j ]),
+                                        targetVelocity=self.signum_fn(vel_arr[ i + 2*j ] or vel_arr[ i ]),
                                         force=100,
                                         physicsClientId=self.pClient)               ## Applying torque
         return True
@@ -102,18 +107,26 @@ class iOTA():
         else:
             return False
 
-    def set_point(self):
+    def set_point(self, setpoint):
         '''
-        This sets the set goal that the planning algorithm will generate the trajectory for
+        This sets the set goal that the planning algorithm will generate the trajectory to this point from current position
         '''
+        self.__setpoint = setpoint
         return True
 
     def plan_vanilla(self):
         '''
-        This plans a simple straight line from the current point to the endpoint and doesnt check for obstacle
+        This plans a simple straight line from the current point to the setpoint and doesnt check for obstacle
         '''
-        
-        return [0,0]
+        curr_pos, _ = self.get_pos()
+        vel_vec = [ (self.__setpoint[i] - self.curr_pos[i]) for i in range(2) ]
+        return vel_vec
+
+    def simulator_api_position(self):
+        '''
+        This simply returns position of the bot using the pybullet api but other computer vision technique could be inculcated in a similar fashion with IMUs
+        '''
+        return p.getBasePositionAndOrientation(self.id, self.pClient)
 
     def signum_fn(self,val):
         '''
@@ -191,8 +204,8 @@ class iOTA():
         other.dockees.append(self)                              ## Useful to make graph of all nodes
         self.dockees.append(other)                              ## Useful to make graph of all nodes
 
-        pos11, _ = p.getBasePositionAndOrientation(self.id, self.pClient)
-        pos22, _ = p.getBasePositionAndOrientation(other.id, other.pClient)
+        pos11, _ = self.get_pos()
+        pos22, _ = other.get_pos()
 
         minn = 1000000000000
         self_id = -1
