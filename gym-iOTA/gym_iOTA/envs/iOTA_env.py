@@ -128,7 +128,7 @@ class IotaEnv(gym.Env):
         '''
         pass
 
-    def render(self):
+    def render(self,mode='cluster'):
         '''
         Renders the scene if allowed
         '''
