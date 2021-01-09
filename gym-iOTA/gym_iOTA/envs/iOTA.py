@@ -16,7 +16,7 @@ class iOTA():
     servo_force = 10        ## This is the maximum force a servo can apply
     dock_encoders = [0,0]   ## This stores the position of servo joint, similar to the real model of a servo
 
-    def __init__(self, path=None, physicsClient=None):
+    def __init__(self, path=None, physicsClient=None,position=None):
         '''
         Simply initializes One Iota module with the given parameters
         '''
@@ -25,17 +25,24 @@ class iOTA():
         self.pClient = physicsClient
         self.vel = [6*(rnd()-0.5)/0.5, 6*(rnd()-0.5)/0.5]       ## Random initialization of velocity
         theta = np.arctan(self.vel[1]/self.vel[0]) +np.pi       ## The yaw of the bot
+        self.__setpoint = [0, 0, 0]
         self.__err = 0.01
         if self.vel[0] < 0 and self.vel[1]>0:
             theta += np.pi
         orie = p.getQuaternionFromEuler((0,0,theta))            ## This is to align the bot to the initialized velocity vector
+        basePosition = position or self.init_pos()              ## This is so that it can be respawned in a desired location as well.
         self.id = p.loadURDF(path,
-                            basePosition=self.init_pos(),
+                            basePosition=basePosition,
                             baseOrientation=orie,
                             physicsClientId=self.pClient)       ## Spawning it with the given parameters
         self.dockees = []                                       ## This stores all the docked members to the given bot (Self)
         self.constraints = []                                   ## This stores all the docking constraints
-
+        self.control = self.control_proportional                ## This way we can set the control algorithm we want to use on the bot
+        ## Basic Structure of any control algorithm is that it should take a velocity vector towards which the bot should move, and should return True if reached the setpoint
+        ## Baseline :- control_proportional
+        self.plan = self.plan_vanilla                           ## This way we can set the path planning algorithm we want to use on the bot
+        ## Basic Structure of any planning algorithm is that it doesnt take any arguement and return a velocity vector towards the next point on the trajectory
+        ## Baseline :- plan_vanilla
     def init_pos(self):
         '''
         Random initialization of the bot within the arena limits
@@ -67,7 +74,7 @@ class iOTA():
                                         physicsClientId=self.pClient)               ## Applying torque
         return True
 
-    def control(self,vel_vec):
+    def control_proportional(self,vel_vec):
         '''
         Low level Control algorithm which works on proportional drive with R and theta as there state parameters, it takes in the desired Velocity vector
         '''
@@ -101,10 +108,11 @@ class iOTA():
         '''
         return True
 
-    def plan(self):
+    def plan_vanilla(self):
         '''
-        This will return a velocity vector in the direction of the trajectory that is to be followed
+        This plans a simple straight line from the current point to the endpoint and doesnt check for obstacle
         '''
+        
         return [0,0]
 
     def signum_fn(self,val):
@@ -128,7 +136,7 @@ class iOTA():
         '''
         self.__err = error
 
-    def respawn(self):
+    def respawn(self,position=None):
         '''
         Respwans the bot in a new location
         '''
@@ -137,6 +145,7 @@ class iOTA():
         if self.vel[0] < 0 and self.vel[1]>0:
             theta += np.pi
         orie = p.getQuaternionFromEuler((0,0,theta))            ## New Orientation
+        basePosition = position or self.init_pos()              ## Spawns at a given place if passed
         p.resetBasePositionAndOrientation(bodyUniqueId=self.id,
                                           posObj=self.init_pos(),
                                           ornObj=orie,
