@@ -64,8 +64,8 @@ for each row [right_forward_wheel, left_forward_wheel, right_back_wheel, left_ba
 #### `env.dockMatrix` *(np.ndarray)* :
 This contains all the joints or dockings that exist in the system, this a array containing if a bot is connected with another.<br/>
 i.e., dockMatrix shape = (no_of_modules, no_of_modules)<br/>
-So if `env.dockMatrix[i][j]` =  0 then it means there is no joint or docking between robot number i and j. similarly if `env.dockMatrix[i][j]` = 1 then it means these two robots are docked together.<br/>
-**note** : `env.dockMatrix[i][j]` = `env.dockMatrix[j][i]` are same as they can have only one constrain between them. And no self docking is possible i.e., `env.dockMatrix[i][i]` = 1 is not possible.<br/>
+So if *env.dockMatrix[i][j]* =  0 then it means there is no joint or docking between robot number i and j. similarly if *env.dockMatrix[i][j]* = 1 then it means these two robots are docked together.<br/>
+**note** : *env.dockMatrix[i][j]* = *env.dockMatrix[j][i]* are same as they can have only one constrain between them. And no self docking is possible i.e., *env.dockMatrix[i][i]* = 1 is not possible.<br/>
 We pass a similar matrix to <a href="#env.step">`env.step`</a> function where-in we denote new joints that we want to make.
 
 #### `env.observation_space` *(gym.Box)* :
@@ -73,4 +73,4 @@ The observation space is simply vector of position and orientation of each robot
 i.e., observation_space shape = (no_of_modules, 6)<br/>
 for each row [x_coor, y_coor, z_coor, roll, pitch, yaw] of that bot.
 
-#### `env.`
+#### `env.step` *(gym.Env.step)* :
