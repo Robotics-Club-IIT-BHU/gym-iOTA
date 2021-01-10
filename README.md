@@ -146,26 +146,37 @@ This simply removes all the joints and dockings and removes all the bodies and c
 <a id="1">[1]</a>
 **Swarmbot-Hardware**: Mondada, F., Pettinaro, G.C., Guignard, A. et al. Swarm-Bot: A New Distributed Robotic Concept. Autonomous Robots 17, 193–221 (2004). doi: 10.1023/B:AURO.0000033972.50769.1c.<br/>
 This contains the Idea behind Swarmbot which was the bot we are inspired by. [[Link]](http://people.idsia.ch/~luca/swarmbot-hardware.pdf) & [[Video]](https://www.youtube.com/watch?v=77SEQ-kj8PI)<br/>
+
 <a id="2">[2]</a>
 **Self-reconfiguring modular robot.** This contains all the pre-existing works in Modular robots and information of their prototypes [[Wikipedia]](https://en.wikipedia.org/wiki/Self-reconfiguring_modular_robot)<br/>
+
 <a id="3">[3]</a>
 **SMORES-EP** : Researchers develop modular bots that combine to form a single flexible machine. This article contains few bot ideas we adopted [[Link]](https://www.engadget.com/2019-07-23-modular-robots-configure-smores.html)<br/>
+
 <a id="4">[4]</a>
 **Modular Self-Reconfiguring Robots** Rus Robotics laboratory's work in the field Modular Robots [[MIT]](https://groups.csail.mit.edu/drl/modular_robots/modular_robots.html).
+
 <a id="5">[5]</a>
 **An integrated system for perception-driven autonomy with modular robots** J. Daudelin, G. Jing, T. Tosun, et al. An integrated system for perception-driven autonomy with modular robots Science Robotics  31 Oct 2018: Vol. 3, Issue 23, eaat4983 DOI: 10.1126/scirobotics.aat4983 [[Link]](https://robotics.sciencemag.org/content/3/23/eaat4983.full?ijkey=iBq7yW7Z8vmjE&keytype=ref&siteid=robotics)<br/>
+
 <a id="6">[6]</a>
 **Symbrion** S. Kernbach, E. Meister, F. Schlauter, et al. Symbiotic robot organisms: Replicator and Symbrion projects January 2008 DOI: 10.1145/1774674.1774685 Conference: Proceedings of the 8th Workshop on Performance Metrics for Intelligent Systems. This is one such project from which we have been immensily inspired [[Paper]](https://www.researchgate.net/publication/234116421_Symbiotic_robot_organisms_Replicator_and_Symbrion_projects)<br/>
+
 <a id="7">[7]</a>
 **Modular Bot Algorithm** H. Ahmadzadeh, E. Masehian, Modular robotic systems: Methods and algorithms for abstraction, planning, control, and synchronization, Volume 223, 2015, Pages 27-64, ISSN 0004-3702, doi: 10.1016/j.artint.2015.02.004. [[Paper]](https://www.sciencedirect.com/science/article/pii/S0004370215000260)<br/>
+
 <a id="8">[8]</a>
 **KiloBots** by Self-Organizing Systems Research Group [[Link]](https://ssr.seas.harvard.edu/kilobots) This is the most simplest swarm system by which we were able to learn about the real problems that we would face in a MultiAgent System.<br/>
+
 <a id="9">[9]</a>
 **KiloBots-MARL** by Somnath Sendhil Kumar, This is a MultiAgent Reinforcement Learning solution presented for the Kilobots system [[Code]](https://github.com/hex-plex/KiloBot-MultiAgent-RL)<br/>
+
 <a id="10">[10]</a>
 **pyBullet**, This is the simulator that we used to simulate our Robots physics in and built The enviroment on top of it. [[Link]](https://pybullet.org/wordpress/) [[Docs]](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.2ye70wns7io3) [[Code]](https://github.com/bulletphysics/bullet3)<br/>
+
 <a id="11">[11]</a>
 **Open-AI gym**, This framework connected the simulators to API's that are standard form in implementing Reinforcement Learning.
 [[Link]](https://gym.openai.com/) [[Docs]](https://gym.openai.com/docs/) [[Code]](https://github.com/openai/gym)<br/>
+
 <a id="12">[12]</a>
 **Pybullet and OpenAI gym**, This is a tutorial which helps in implementing Pybullet as the backend with OpenAI gym, [[Link]](https://www.etedal.net/2020/04/pybullet-panda.html)
