@@ -180,3 +180,6 @@ This contains the Idea behind Swarmbot which was the bot we are inspired by. [[L
 
 <a id="12">[12]</a>
 **Pybullet and OpenAI gym**, This is a tutorial which helps in implementing Pybullet as the backend with OpenAI gym, [[Link]](https://www.etedal.net/2020/04/pybullet-panda.html)
+
+<a id="13">[13]</a>
+**SW to URDF**, This is the SolidWorks plugin that we used to convert our SolidWork Designs into importable URDFS which is provided by the ROS community. [[Link]](http://wiki.ros.org/sw_urdf_exporter)
