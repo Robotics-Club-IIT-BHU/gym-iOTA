@@ -3,12 +3,13 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 
 import os
+import inspect
 import pybullet as p
 import pybullet_data
 import numpy as np
 import cv2
 from PIL import Image
-from iOTA import iOTA
+from .iOTA import iOTA
 
 import pkg_resources
 
@@ -22,13 +23,14 @@ os.sys.path.insert(0, parentdir)
 
 
 class IotaEnv(gym.Env):
-    metadata = {'render.modes',['human','cluster']}
+    metadata = {'render.modes':['human','cluster']}
 
-    def __init__(self, render=False, n=None, no_of_modules=None, k=None, no_of_clusters=None, arena=(2,2), low_control=False):
+    def __init__(self, render=False, n=None, no_of_modules=None, k=None, no_of_clusters=None, arena=(2,2), low_control=True):
         '''
         Initializing the env
         '''
         self.pClient = p.connect(p.GUI if render else p.DIRECT)
+        p.setGravity(0,0,-10,physicsClientId=self.pClient)
         self.rend = render
         if self.rend:
             p.resetDebugVisualizerCamera(
@@ -45,38 +47,38 @@ class IotaEnv(gym.Env):
         self.plane = p.loadURDF('plane.urdf',
                                 physicsClientId=self.pClient)
         self.cube = p.loadURDF(currentdir+'/absolute/dabba.urdf',
-                                basePosition=(arena[0],0,0.5),
+                                basePosition=(arena[0]/2,0,0.1),
                                 physicsClientId=self.pClient)
         self.target_pos = (-arena[0],0,0.5)
         self.low_control = low_control
         if self.low_control:
             self.action_space = spaces.Box(
-                                            low=np.array( [ [-6, -6, -6, -6] ]*self.n),
-                                            high=np.array( [ [6, 6, 6, 6] ]*self.n )
+                                            low=np.array( [ [-6, -6, -6, -6] ]*self.n ,dtype=np.float32),
+                                            high=np.array( [ [6, 6, 6, 6] ]*self.n , dtype=np.float32)
                                         )
         else:
             self.action_space = spaces.Box(
                                             low=np.array(
-                                                [[*(-1*np.array(arena)),-0.5]]*self.n
+                                                [[*(-1*np.array(arena)),-0.5]]*self.n, dtype=np.float32
                                                 ),
                                             high=np.array(
-                                                [[*np.array(arena),0.5]]*self.n
+                                                [[*np.array(arena),0.5]]*self.n, dtype=np.float32
                                                 )
                                             )
         self.observation_space = spaces.Box(
                                         low=np.array(
-                                            [[*(-1*np.array(arena)),-0.5]]*self.n
+                                            [[*(-1*np.array(arena)),-0.5]]*self.n , dtype=np.float32
                                             ),
                                         high=np.array(
-                                            [[*np.array(arena),0.5]]*self.n
+                                            [[*np.array(arena),0.5]]*self.n , dtype = np.float32
                                             )
                                         )
-        self.iotas = [ iOTA(currentdir+"/absolute/iota.urdf",self.pClient) for i in range(self.n) ]
+        self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]
 
-        self.get_pos = lambda inst, x : (
-                        p.getBasePositionAndOrientation(x.id,inst.pClient)[0],
+        self.get_pos = lambda x : (
+                        p.getBasePositionAndOrientation(x.id,self.pClient)[0],
                         p.getEulerFromQuaternion(
-                                p.getBasePositionAndOrientation(x.id,inst.pClient)[1]
+                                p.getBasePositionAndOrientation(x.id,self.pClient)[1]
                             )
                     )                                                           ## This is totally depreciated but is a alternative to the multicamera detections and IMUs
 
@@ -87,7 +89,7 @@ class IotaEnv(gym.Env):
         reward = 0
         docks = np.zeros((self.n,self.n)) - np.eye(self.n)                      ## disabling docking to reduce complexity
         if self.low_control:
-            for i,(act,iota) in enumerate(zip(*action,self.iotas)):
+            for i,(act,iota) in enumerate(zip(action,self.iotas)):
                 for j,dock in enumerate(docks[i,:]):
                     if dock>=1:
                         try:
@@ -97,7 +99,7 @@ class IotaEnv(gym.Env):
                 iota.low_control(act)
                 p.stepSimulation(self.pClient)
         else:
-            for i,(pos,iota) in enumerate(zip(*action,self.iotas)):
+            for i,(pos,iota) in enumerate(zip(action,self.iotas)):
                 iota.set_point(pos)
                 for j,dock in enumerate(docks[i,:]):
                     if dock>=1:

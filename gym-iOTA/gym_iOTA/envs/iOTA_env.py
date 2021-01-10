@@ -30,6 +30,7 @@ class IotaEnv(gym.Env):
         Initializing the env
         '''
         self.pClient = p.connect(p.GUI if render else p.DIRECT)
+        p.setGravity(0,0,-10,physicsClientId=self.pClient)
         self.rend = render
         if self.rend:
             p.resetDebugVisualizerCamera(
@@ -52,27 +53,27 @@ class IotaEnv(gym.Env):
         self.low_control = low_control
         if self.low_control:
             self.action_space = spaces.Box(
-                                            low=np.array( [ [-6, -6, -6, -6] ]*self.n),
-                                            high=np.array( [ [6, 6, 6, 6] ]*self.n )
+                                            low=np.array( [ [-6, -6, -6, -6] ]*self.n ,dtype=np.float32),
+                                            high=np.array( [ [6, 6, 6, 6] ]*self.n , dtype=np.float32)
                                         )
         else:
             self.action_space = spaces.Box(
                                             low=np.array(
-                                                [[*(-1*np.array(arena)),-0.5]]*self.n
+                                                [[*(-1*np.array(arena)),-0.5]]*self.n, dtype=np.float32
                                                 ),
                                             high=np.array(
-                                                [[*np.array(arena),0.5]]*self.n
+                                                [[*np.array(arena),0.5]]*self.n, dtype=np.float32
                                                 )
                                             )
         self.observation_space = spaces.Box(
                                         low=np.array(
-                                            [[*(-1*np.array(arena)),-0.5]]*self.n
+                                            [[*(-1*np.array(arena)),-0.5]]*self.n , dtype=np.float32
                                             ),
                                         high=np.array(
-                                            [[*np.array(arena),0.5]]*self.n
+                                            [[*np.array(arena),0.5]]*self.n , dtype = np.float32
                                             )
                                         )
-        self.iotas = [ iOTA(currentdir+"/absolute/iota.urdf",self.pClient) for i in range(self.n) ]
+        self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]
 
         self.get_pos = lambda x : (
                         p.getBasePositionAndOrientation(x.id,self.pClient)[0],

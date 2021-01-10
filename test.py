@@ -7,9 +7,9 @@ i=0
 
 while i<1000000:
     i+=1
-    action = np.ones((4,env.n))
+    action = 5*np.ones((env.n,4))
     dock = np.zeros((env.n, env.n))
     env.step(action,dock)
-    if i%100000:
-        env.render()
+    #if i%100000:
+       # env.render()
 env.close()

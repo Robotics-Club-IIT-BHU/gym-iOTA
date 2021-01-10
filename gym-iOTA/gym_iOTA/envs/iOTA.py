@@ -16,13 +16,16 @@ class iOTA():
     servo_force = 10        ## This is the maximum force a servo can apply
     dock_encoders = [0,0]   ## This stores the position of servo joint, similar to the real model of a servo
 
-    def __init__(self, path=None, physicsClient=None,position=None):
+    def __init__(self, path=None, physicsClient=None,position=None,arena=None):
         '''
         Simply initializes One Iota module with the given parameters
         '''
         if path is None:
             path="urdf/iota.urdf"
         self.pClient = physicsClient
+        if arena is not None:
+            self.arena_x = arena[0]
+            self.arena_y = arena[1]
         self.vel = [6*(rnd()-0.5)/0.5, 6*(rnd()-0.5)/0.5]       ## Random initialization of velocity
         theta = np.arctan(self.vel[1]/self.vel[0]) +np.pi       ## The yaw of the bot
         self.__setpoint = [0, 0, 0]
@@ -134,12 +137,12 @@ class iOTA():
         '''
         if val>0:
             if val > self.min_vel:
-                return min(self.max_vel,val)
+                return 10*min(self.max_vel,val)
             else:
                 return 0
         else:
             if val < -1*self.min_vel:
-                return max(-1*self.max_vel, val)
+                return 10*max(-1*self.max_vel, val)
             else:
                 return 0
 
