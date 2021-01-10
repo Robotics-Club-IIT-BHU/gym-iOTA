@@ -59,7 +59,14 @@ while True:
 env.close()                                   ## simply removes all the docks and the bots and disconnects from the simulator.
 ```
 
-## Test Run
+## Objective
+The objective of the environment is to use these robots to push the box from one side of the arena to the other. The below is a dry run with classical localization algorithm - **Particle Swarm Optimization Algorithm**.
+<p align="center"><img src="media/Objective.gif"/> </p><br/>
+<p align="center">Here the swarm of bots try to localize the box in the 3D environment</p><br/>
+
+The Reward function is defined as the negetive of the distance between the position of the cube to the end point which is on the other side of the arena.
+<p align="center"><img src="https://render.githubusercontent.com/render/math?math=R = - \sum_{axis} (Cube_{pos}-End_{pos})^{2}"></p>
+
 
 
 ## Info

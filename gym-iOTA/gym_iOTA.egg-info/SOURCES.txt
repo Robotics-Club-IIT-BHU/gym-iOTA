@@ -7,6 +7,7 @@ gym_iOTA.egg-info/dependency_links.txt
 gym_iOTA.egg-info/requires.txt
 gym_iOTA.egg-info/top_level.txt
 gym_iOTA/envs/__init__.py
+gym_iOTA/envs/formation.py
 gym_iOTA/envs/iOTA.py
 gym_iOTA/envs/iOTA_env.py
 gym_iOTA/envs/absolute/iota.urdf
