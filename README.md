@@ -87,5 +87,38 @@ This returns the image of the top view of the arena. The image is also rendered 
 #### `env.close` *(gym.Env.close)*:
 This simply removes all the joints and dockings and removes all the bodies and closes the connection to the physics server.
 
+## Test Run
 
-## Team
+## The Team
+<table>
+ <td align="center">
+     <a href="https://github.com/hex-plex">
+    <img src="https://avatars0.githubusercontent.com/u/56990337?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Somnath Sendhil Kumar </b></sub></a><br />
+    </td>
+    <td align="center">
+     <a href="https://github.com/surabhit-08">
+    <img src="https://avatars3.githubusercontent.com/u/62366465?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Surabhit Gupta</b></sub></a><br />
+	</td>
+	<td align="center">
+     <a href="https://github.com/rtharungowda">
+    <img src="https://avatars1.githubusercontent.com/u/55887709?s=460&v=4" width="100px;" alt=""/><br /><sub><b>R Tharun Gowda</b></sub></a><br />
+	</td>
+	<td align="center">
+     <a href="https://github.com/Kritika-Bansal">
+    <img src="https://avatars2.githubusercontent.com/u/57754061?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Kritika Bansal</b></sub></a><br />
+	</td>
+
+</table>
+
+## Mentors
+<table>
+ <td align="center">
+     <a href="https://github.com/lok-i">
+    <img src="https://avatars1.githubusercontent.com/u/54435909?s=460&u=29af076049dab351b2e43621e9a433919bf50fb1&v=4" width="100px;" alt=""/><br /><sub><b>Lokesh Krishna</b></sub></a><br />
+    </td>
+    <td align="center">
+     <a href="https://github.com/NiranthS">
+    <img src="https://media-exp1.licdn.com/dms/image/C4D03AQE0VSQ1pjwEJQ/profile-displayphoto-shrink_200_200/0/1597415223546?e=1616025600&v=beta&t=MLymy6q1n58MV2aL2l-13cnGJytixf5qnQV7HhZ4itE" width="100px;" alt=""/><br /><sub><b>Niranth Sai</b></sub></a><br />
+	</td>
+
+</table>
