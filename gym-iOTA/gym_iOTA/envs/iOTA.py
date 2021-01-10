@@ -27,10 +27,10 @@ class iOTA():
             self.arena_x = arena[0]
             self.arena_y = arena[1]
         self.vel = [6*(rnd()-0.5)/0.5, 6*(rnd()-0.5)/0.5]       ## Random initialization of velocity
-        theta = np.arctan(self.vel[1]/self.vel[0]) +np.pi       ## The yaw of the bot
+        theta = np.arctan((self.vel[1]+1e-8)/(self.vel[0]+1e-8))## The yaw of the bot
         self.__setpoint = [0, 0, 0]
         self.__err = 0.01
-        if self.vel[0] < 0 and self.vel[1]>0:
+        if self.vel[0] < 0:
             theta += np.pi
         orie = p.getQuaternionFromEuler((0,0,theta))            ## This is to align the bot to the initialized velocity vector
         basePosition = position or self.init_pos()              ## This is so that it can be respawned in a desired location as well.
@@ -88,19 +88,21 @@ class iOTA():
         '''
         orie = p.getBasePositionAndOrientation(self.id, self.pClient)[1]
         yaw = p.getEulerFromQuaternion(orie)[2]
-        set_vec = np.arctan(vel_vec[1]/vel_vec[0]) + np.pi
-        if vel_vec[0]<0 and vel_vec[1] > 0 :
+        set_vec = np.arctan((vel_vec[1]+1e-8)/(vel_vec[0]+1e-8))
+        if vel_vec[0]<0:
             set_vec += np.pi
         r = sqrt(vel_vec[0]**2 + vel_vec[1]**2)                                     ## The Magnitude of velocity
+        print(set_vec, yaw)
         theta = set_vec - yaw                                                       ## The amount of angle to be rotated
-        for_vec = [np.cos(theta)*r, np.cos(theta)*r]                                ## Components of Velocity - Forward
-        rot_vec = [-np.sin(theta)*r, np.sin(theta)*r]                               ## Components of Velocity - Rotate
+        ## Please REMEMBER the orientation is inverse hence the sign is inversed
+        for_vec = [-np.cos(theta)*r, -np.cos(theta)*r]                                ## Components of Velocity - Forward
+        rot_vec = [np.sin(theta)*r, -np.sin(theta)*r]                               ## Components of Velocity - Rotate
         for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):               ## Iterating over wheels
             for wheel in wheel_set:
                 p.setJointMotorControl2(self.id,
                                         wheel,
                                         controlMode=p.VELOCITY_CONTROL,
-                                        targetVelocity=self.signum_fn(for_vec[i]+rot_vec[i]),
+                                        targetVelocity=for_vec[i]+rot_vec[i],
                                         force=100,
                                         physicsClientId=self.pClient)               ## Applying torque
         self.vel = vel_vec
@@ -122,7 +124,7 @@ class iOTA():
         This plans a simple straight line from the current point to the setpoint and doesnt check for obstacle
         '''
         curr_pos, _ = self.get_pos()
-        vel_vec = [ (self.__setpoint[i] - self.curr_pos[i]) for i in range(2) ]
+        vel_vec = [ (self.__setpoint[i] - curr_pos[i]) for i in range(2) ]
         return vel_vec
 
     def simulator_api_position(self):

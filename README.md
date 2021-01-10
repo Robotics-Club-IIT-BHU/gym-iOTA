@@ -1,5 +1,7 @@
 # gym-iOTA
-This is an Open-AI gym environment developed with a modular bot platform named '*iOTA*'. The main motive of this gym is to allow us to test out and develop Algorithms for such a MultiAgent System.
+This is an Open-AI gym environment developed with a modular bot platform named '**iOTA**'. The motive of this gym is to allow us to test out and develop Algorithms for such a MultiAgent System. This is further used to learn heirarchial planning of such a MultiAgent systems to develop a generalized swarm behaviour in the robots (i.e., Colabortively working towards achieving a objective). This is an project that is being developed under the **RoBoReg division of the Robotics Club, IIT Varanasi.**
+
+Here the robot is designed in *SolidWorks* and being Simulated in *pybullet*.
 ## IOTA
 <img src="media/bRoll.gif" width=300 align="right"></img>
 
@@ -20,8 +22,8 @@ pip install gym-iOTA
 ```
 #### Depedencies
 >gym<br/>
->opencv-python<br/>
 >pybullet<br/>
+>opencv-python<br/>
 >Pillow
 
 ## Usage
@@ -34,22 +36,29 @@ import gym_iOTA
 env = gym.make('iOTA-v0',
                 render=True,                  ## This runs the simulator in GUI mode
                 no_of_modules=10,             ## This spawns so many no of robots
-                no_of_clusters=10,            ## This is used to subdivide the total no of robots into groups named clusters More on it later.
+                no_of_clusters=10,            ## This is for subdividing the total no of robots in cluster for efficient accessing.
                 arena=(2,2),                  ## This sets the dimension of the forseeable space for the system
-                low_control=True,             ## This flag makes the action space to be the desired velocity of each wheel touching the ground else is setpoint the bot must travel to.
+                low_control=True,             ## This flag enables the low level control of the bot to the user.
                 )
 while True:
-  action = np.ones((env.no_of_modules, 4))    
-  ## Where for each row we have four velocities
-  dock = np.zeros((env.no_of_modules, 4))     ## This is the adjancy matrix storing all the docking relationships
-  ## for dock[i][j] = 1 the simulator would dock bot[i] -> bot[j], dock[i][j] = 1 and dock[j][i] = 1 would result in the same joint so only fill one in the dock matrix
+  action = np.ones((env.no_of_modules, 4))    ## Where for each row we have four velocities
+  dock = np.zeros(
+              (env.no_of_modules,
+              env.no_of_modules))             ## This is the adjancy matrix storing all the docking relationships
+
   observation, reward, done, info = env.step(action, dock)
+
   observation                                 ## This is the coordinates+orientation of each bot
-  env.render(mode='cluster')                                ## If the render mode was set 'cluster' then will return the image of the top view of the arena, else if was set to 'human' will plot the Image as well using PIL mostly is not desirable.
+  env.render(mode='cluster')                  ## This would return the image and even render if was not in GUI mode earlier.
+
   if done:
     break
 env.close()                                   ## simply removes all the docks and the bots and disconnects from the simulator.
 ```
+
+## Test Run
+
+
 ## Info
 This section contains details about the environment API's and utils available in it for developement.
 
@@ -87,8 +96,6 @@ This returns the image of the top view of the arena. The image is also rendered 
 #### `env.close` *(gym.Env.close)*:
 This simply removes all the joints and dockings and removes all the bodies and closes the connection to the physics server.
 
-## Test Run
-
 ## The Team
 <table>
  <td align="center">
@@ -122,3 +129,11 @@ This simply removes all the joints and dockings and removes all the bodies and c
 	</td>
 
 </table>
+
+## References
+- Swarmbot
+- Pybullet
+-
+-
+-
+-
