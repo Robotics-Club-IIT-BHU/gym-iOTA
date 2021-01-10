@@ -81,6 +81,7 @@ class IotaEnv(gym.Env):
                                 p.getBasePositionAndOrientation(x.id,self.pClient)[1]
                             )
                     )                                                           ## This is totally depreciated but is a alternative to the multicamera detections and IMUs
+        self.dockingMatrix = np.zeros((self.n, self.n))
 
     def step(self,action,docks):
         '''
@@ -128,7 +129,22 @@ class IotaEnv(gym.Env):
         '''
         Resets the env
         '''
-        pass
+        self.dockingMatrix = np.zeros((self.n, self.n))
+        p.resetBasePositionAndOrientation(
+            self.cube,
+            posObj=(arena[0]/2, 0, 0.1),
+            ornObj=(0, 0, 0, 1),
+            physicsClientId=self.pClient
+        )
+        for iota in self.iotas:
+            for dockee in iota.dockees:
+                iota.undock(dockee)
+            iota.respawn()
+        observation = []
+        for iota in self.iotas:
+            observation.append(self.get_pos(iota)[0])
+        observation = np.array(observation)
+        return observation
 
     def render(self,mode='cluster'):
         '''
