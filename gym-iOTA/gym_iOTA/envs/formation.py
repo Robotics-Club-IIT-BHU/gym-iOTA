@@ -39,15 +39,19 @@ A3 = [ [2.5 + 0.2*(i-1.5),0,z] for i in range(a3_n) ]
 iotas_a3 = [ iOTA(path='absolute/iota.urdf',position=pos_a,physicsClient=pClient) for pos_a in A3 ]
 
 tip = [-5, 0.85, z]
+iota_i_tip.set_error(100)
 iota_i_tip.set_point(tip)
-
+time.sleep(6)
 vec = iota_i_tip.plan()
-vec[0] *=20; vec[1] *= 20
+vec[0] *=50; vec[1] *= 50
 while not iota_i_tip.control(vec) :
     vec = iota_i_tip.plan()
-    vec[0] *=20; vec[1] *= 20
-    for i in range(5):p.stepSimulation(pClient)
+    vec[0] *=50; vec[1] *=50
+    for i in range(10):p.stepSimulation(pClient)
     time.sleep(0.005)
 while True:
-    p.stepSimulation(pClient)
+    for iotas in [iotas_i, iotas_o, iotas_t1, iotas_t2, iotas_a1, iotas_a2, iotas_a3]:
+        for iota in iotas:
+            iota.control(iota.vel)
+    for i in range(10):p.stepSimulation(pClient)
     time.sleep(0.005)
