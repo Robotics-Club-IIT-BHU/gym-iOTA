@@ -73,12 +73,19 @@ The observation space is simply vector of position and orientation of each robot
 i.e., observation_space shape = (no_of_modules, 6)<br/>
 for each row [x_coor, y_coor, z_coor, roll, pitch, yaw] of that bot.
 
+#### `env.iotas` *(class iOTA)* :
+This is a list of robots that have been spawned into the simulator and gives us individual control over each robot. A list API's and variables are given [here](/gym-iOTA/gym_iOTA/envs). <br/>
+The index of each robot in the list the robot number assigned to it which is the convection we use through out.
 #### `env.step` *(gym.Env.step)* :
 This takes in two inputs one action being the <a href="#envaction_space-gymbox-">`env.action_space`</a> and a dock matrix similar to the <a href="#envdockmatrix-npndarray-">`env.dockingMatrix`</a> <br/>
 it returns the usual <br/>
 *``` observation, reward, done, info ```*
 
-#### `env.render` *(np.ndarray)*
+#### `env.render` *(np.ndarray)* :
 This returns the image of the top view of the arena. The image is also rendered using PIL's Image class if `mode = 'human'`
 
-####
+#### `env.close` *(gym.Env.close)*:
+This simply removes all the joints and dockings and removes all the bodies and closes the connection to the physics server.
+
+
+## Team
