@@ -1,5 +1,5 @@
 # gym-iOTA
-This is an Open-AI gym environment developed with a modular bot platform named '**iOTA**'. The motive of this gym is to allow us to test out and develop Algorithms for such a MultiAgent System. This is further used to learn heirarchial planning of such a MultiAgent systems to develop a generalized swarm behaviour in the robots (i.e., Colabortively working towards achieving a objective). This is an project that is being developed under the **RoBoReg division of the Robotics Club, IIT Varanasi.**
+This is an Open-AI gym environment developed with a modular bot platform named '**iOTA**'. The motive of this gym is to allow us to test out and develop Algorithms for such a MultiAgent System. This is further used to learn heirarchial planning of such a MultiAgent systems to develop a generalized swarm behaviour in the robots (i.e., Colabortively working towards achieving a objective). This is an project that is being developed under the **RoBoReG division of the Robotics Club, IIT Varanasi.**
 
 Here the robot is designed in *SolidWorks* and being Simulated in *pybullet*.
 <p align="center"><img src="media/Random.gif"/></p><br/>
