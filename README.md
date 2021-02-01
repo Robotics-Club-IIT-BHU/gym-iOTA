@@ -8,7 +8,7 @@ Here the robot is designed in *SolidWorks* and being Simulated in *pybullet*.
 ## IOTA
 <img src="media/bRoll.gif" width=300 align="right"></img>
 
-This is a cost effective modular robot platform developed by us, This contains two docking plates enabling it to dock with other robots at those locations. This has got a very antique WW1 tank inspired designed which allows the bot too with enough traction when used with catpillar tracks.
+This is a cost effective modular robot platform developed by us, it contains two docking plates enabling it to dock with other robots at those locations. It also has got a very antique WW1 tank inspired designed which allows the bot too with enough traction when used with catpillar tracks.
 
 For more info on the bot hardware and designs please visit this page [here](/hardware_Designs) or [doc](https://onedrive.live.com/view.aspx?resid=3B7945FE006E67D!4175&ithint=file%2cdocx&authkey=!AA_ziTqK6vYo80c)
 <br/><br/>
