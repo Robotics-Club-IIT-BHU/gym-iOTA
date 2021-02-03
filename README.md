@@ -24,10 +24,10 @@ else for stable releases. the below would work fine.
 pip install gym-iOTA
 ```
 #### Depedencies
->gym<br/>
->pybullet<br/>
->opencv-python<br/>
->Pillow
+- gym
+- pybullet
+- opencv-python
+- Pillow
 
 ## Usage
 This environment can be accessed using gym api, and a small demo scipt is given below.

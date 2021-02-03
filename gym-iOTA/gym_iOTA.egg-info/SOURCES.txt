@@ -39,3 +39,10 @@ gym_iOTA/envs/absolute/meshes/uf_l_wheel.STL
 gym_iOTA/envs/absolute/meshes/uf_r_motor.STL
 gym_iOTA/envs/absolute/meshes/uf_r_wheel.STL
 gym_iOTA/envs/absolute/meshes/upper_bracket.STL
+gym_iOTA/utils/__init__.py
+gym_iOTA/utils/clustering.py
+gym_iOTA/utils/control.py
+gym_iOTA/utils/curve_param.py
+gym_iOTA/utils/demo.py
+gym_iOTA/utils/distribution.py
+gym_iOTA/utils/planning.py
