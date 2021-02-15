@@ -41,7 +41,9 @@ class IotaEnv(gym.Env):
                                         physicsClientId=self.pClient
                                         )
         self.n = (n or no_of_modules) or 10
+        self.no_of_modules = self.n
         self.k = (k or no_of_clusters) or 1
+        self.no_of_clusters = self.k
         self.arena = arena
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         self.plane = p.loadURDF('plane.urdf',
@@ -132,7 +134,7 @@ class IotaEnv(gym.Env):
         self.dockingMatrix = np.zeros((self.n, self.n))
         p.resetBasePositionAndOrientation(
             self.cube,
-            posObj=(arena[0]/2, 0, 0.1),
+            posObj=(self.arena[0]/2, 0, 0.1),
             ornObj=(0, 0, 0, 1),
             physicsClientId=self.pClient
         )

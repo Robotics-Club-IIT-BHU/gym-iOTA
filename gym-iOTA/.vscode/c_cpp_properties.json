@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/hexplex0xff/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/hexplex0xff/catkin_ws/src/learn_ps3joy/include/**",
+        "/home/hexplex0xff/catkin_ws/src/mavros/libmavconn/include/**",
+        "/home/hexplex0xff/catkin_ws/src/mavros/mavros/include/**",
+        "/home/hexplex0xff/catkin_ws/src/mavros/mavros_msgs/include/**",
+        "/home/hexplex0xff/catkin_ws/src/mavros/test_mavros/include/**",
+        "/home/hexplex0xff/catkin_ws/src/turtlebot3_simulations/turtlebot3_fake/include/**",
+        "/home/hexplex0xff/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/hexplex0xff/catkin_ws/src/turtlebot3/turtlebot3_slam/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
