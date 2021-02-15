@@ -187,4 +187,6 @@ class IotaEnv(gym.Env):
         '''
         Simply closes the connection to the physics server
         '''
+        for iota in self.iotas:
+            del iota
         p.disconnect(self.pClient)
