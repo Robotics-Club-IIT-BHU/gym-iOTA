@@ -29,28 +29,14 @@ class IotaEnv(gym.Env):
         '''
         Initializing the env
         '''
-        self.pClient = p.connect(p.GUI if render else p.DIRECT)
-        p.setGravity(0,0,-10,physicsClientId=self.pClient)
+        self.pClient = -1
         self.rend = render
-        if self.rend:
-            p.resetDebugVisualizerCamera(
-                                        cameraDistance=1.5,
-                                        cameraYaw=0,
-                                        cameraPitch=-40,
-                                        cameraTargetPosition=[0.55,-0.35,0.2],
-                                        physicsClientId=self.pClient
-                                        )
         self.n = (n or no_of_modules) or 10
         self.no_of_modules = self.n
         self.k = (k or no_of_clusters) or 1
         self.no_of_clusters = self.k
         self.arena = arena
-        p.setAdditionalSearchPath(pybullet_data.getDataPath())
-        self.plane = p.loadURDF('plane.urdf',
-                                physicsClientId=self.pClient)
-        self.cube = p.loadURDF(currentdir+'/absolute/dabba.urdf',
-                                basePosition=(arena[0]/2,0,0.1),
-                                physicsClientId=self.pClient)
+        
         self.target_pos = (-arena[0],0,0.5)
         self.low_control = low_control
         if self.low_control:
@@ -75,6 +61,26 @@ class IotaEnv(gym.Env):
                                             [[*np.array(arena),0.5]]*self.n , dtype = np.float32
                                             )
                                         )
+        self.dockingMatrix = np.zeros((self.n, self.n))
+
+    def setup_env(self):
+        self.pClient = p.connect(p.GUI if self.rend else p.DIRECT)
+        p.setGravity(0,0,-10,physicsClientId=self.pClient)
+        if self.rend:
+            p.resetDebugVisualizerCamera(
+                                        cameraDistance=1.5,
+                                        cameraYaw=0,
+                                        cameraPitch=-40,
+                                        cameraTargetPosition=[0.55,-0.35,0.2],
+                                        physicsClientId=self.pClient
+                                        )
+        p.setAdditionalSearchPath(pybullet_data.getDataPath())
+        self.plane = p.loadURDF('plane.urdf',
+                                physicsClientId=self.pClient)
+        self.cube = p.loadURDF(currentdir+'/absolute/dabba.urdf',
+                                basePosition=(arena[0]/2,0,0.1),
+                                physicsClientId=self.pClient)
+
         self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]
 
         self.get_pos = lambda x : (
@@ -83,7 +89,8 @@ class IotaEnv(gym.Env):
                                 p.getBasePositionAndOrientation(x.id,self.pClient)[1]
                             )
                     )                                                           ## This is totally depreciated but is a alternative to the multicamera detections and IMUs
-        self.dockingMatrix = np.zeros((self.n, self.n))
+        
+
 
     def step(self,action,docks):
         '''
@@ -131,6 +138,8 @@ class IotaEnv(gym.Env):
         '''
         Resets the env
         '''
+        if self.pClient<0:
+            self.setup_env()
         self.dockingMatrix = np.zeros((self.n, self.n))
         p.resetBasePositionAndOrientation(
             self.cube,
