@@ -92,7 +92,7 @@ class iOTA():
         if vel_vec[0]<0:
             set_vec += np.pi
         r = sqrt(vel_vec[0]**2 + vel_vec[1]**2)                                     ## The Magnitude of velocity
-        print(set_vec, yaw)
+        #print(set_vec, yaw)
         theta = set_vec - yaw                                                       ## The amount of angle to be rotated
         ## Please REMEMBER the orientation is inverse hence the sign is inversed
         for_vec = [-np.cos(theta)*r, -np.cos(theta)*r]                                ## Components of Velocity - Forward
@@ -124,7 +124,7 @@ class iOTA():
         This plans a simple straight line from the current point to the setpoint and doesnt check for obstacle
         '''
         curr_pos, _ = self.get_pos()
-        vel_vec = [ (self.__setpoint[i] - curr_pos[i]) for i in range(2) ]
+        vel_vec = [ 50*(self.__setpoint[i] - curr_pos[i]) for i in range(2) ]
         return vel_vec
 
     def simulator_api_position(self):
@@ -223,7 +223,7 @@ class iOTA():
                 temp_other = p.getLinkState(other.id,
                                other.docks[j],
                                )[0]
-                temp_dst = sum([(temp_Self[i] - temp_Other[i])**2 for i in range(3) ])
+                temp_dst = sum([(temp_Self[i] - temp_other[i])**2 for i in range(3) ])
                 if temp_dst < minn:
                     minn = temp_dst
                     self_id = i

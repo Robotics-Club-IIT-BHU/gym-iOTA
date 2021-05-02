@@ -141,7 +141,7 @@ class IotaEnv(gym.Env):
         for iota in self.iotas:
             for dockee in iota.dockees:
                 iota.undock(dockee)
-            iota.respawn()
+            #iota.respawn()
         observation = []
         for iota in self.iotas:
             observation.append(self.get_pos(iota)[0])
