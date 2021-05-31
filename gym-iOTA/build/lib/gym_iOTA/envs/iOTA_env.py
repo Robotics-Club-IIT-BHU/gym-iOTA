@@ -78,7 +78,7 @@ class IotaEnv(gym.Env):
         self.plane = p.loadURDF('plane.urdf',
                                 physicsClientId=self.pClient)
         self.cube = p.loadURDF(currentdir+'/absolute/dabba.urdf',
-                                basePosition=(arena[0]/2,0,0.1),
+                                basePosition=(self.arena[0]/2,0,0.1),
                                 physicsClientId=self.pClient)
 
         self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]

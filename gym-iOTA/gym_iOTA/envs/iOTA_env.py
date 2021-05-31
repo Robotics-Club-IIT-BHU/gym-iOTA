@@ -25,7 +25,7 @@ os.sys.path.insert(0, parentdir)
 class IotaEnv(gym.Env):
     metadata = {'render.modes':['human','cluster']}
 
-    def __init__(self, render=False, n=None, no_of_modules=None, k=None, no_of_clusters=None, arena=(2,2), low_control=True):
+    def __init__(self, render=False, n=None, no_of_modules=None, k=None, no_of_clusters=None, arena=(2,2), low_control=False):
         '''
         Initializing the env
         '''
@@ -78,7 +78,7 @@ class IotaEnv(gym.Env):
         self.plane = p.loadURDF('plane.urdf',
                                 physicsClientId=self.pClient)
         self.cube = p.loadURDF(currentdir+'/absolute/dabba.urdf',
-                                basePosition=(arena[0]/2,0,0.1),
+                                basePosition=(self.arena[0]/2,0,0.1),
                                 physicsClientId=self.pClient)
 
         self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]
