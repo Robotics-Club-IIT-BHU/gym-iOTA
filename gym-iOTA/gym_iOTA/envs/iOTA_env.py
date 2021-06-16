@@ -8,6 +8,7 @@ import pybullet as p
 import pybullet_data
 import numpy as np
 import cv2
+import time
 from PIL import Image
 from .iOTA import iOTA
 
@@ -41,24 +42,24 @@ class IotaEnv(gym.Env):
         self.low_control = low_control
         if self.low_control:
             self.action_space = spaces.Box(
-                                            low=np.array( [ [-6, -6, -6, -6] ]*self.n ,dtype=np.float32),
-                                            high=np.array( [ [6, 6, 6, 6] ]*self.n , dtype=np.float32)
+                                            low=np.array( [ [-6, -6, -6, -6] for _ in range(self.n)  ] ,dtype=np.float32),
+                                            high=np.array( [ [6, 6, 6, 6] for _ in range(self.n) ]  , dtype=np.float32)
                                         )
         else:
             self.action_space = spaces.Box(
                                             low=np.array(
-                                                [[*(-1*np.array(arena)),-0.5]]*self.n, dtype=np.float32
+                                                [[*(-1*np.array(arena)),-0.5] for _ in range(self.n) ] , dtype=np.float32
                                                 ),
                                             high=np.array(
-                                                [[*np.array(arena),0.5]]*self.n, dtype=np.float32
+                                                [[*np.array(arena),0.5] for _ in range(self.n) ] , dtype=np.float32
                                                 )
                                             )
         self.observation_space = spaces.Box(
                                         low=np.array(
-                                            [[*(-1*np.array(arena)),-0.5]]*self.n , dtype=np.float32
+                                            [[*(-1*np.array(arena)),-0.5] for _ in range(self.n) ] , dtype=np.float32
                                             ),
                                         high=np.array(
-                                            [[*np.array(arena),0.5]]*self.n , dtype = np.float32
+                                            [[*np.array(arena),0.5] for _ in range(self.n) ]  , dtype = np.float32
                                             )
                                         )
         self.dockingMatrix = np.zeros((self.n, self.n))
@@ -84,9 +85,9 @@ class IotaEnv(gym.Env):
         self.iotas = [ iOTA(path=currentdir+"/absolute/iota.urdf",physicsClient=self.pClient,arena=self.arena) for i in range(self.n) ]
 
         self.get_pos = lambda x : (
-                        p.getBasePositionAndOrientation(x.id,self.pClient)[0],
+                        p.getBasePositionAndOrientation(x.base_id,self.pClient)[0],
                         p.getEulerFromQuaternion(
-                                p.getBasePositionAndOrientation(x.id,self.pClient)[1]
+                                p.getBasePositionAndOrientation(x.base_id,self.pClient)[1]
                             )
                     )                                                           ## This is totally depreciated but is a alternative to the multicamera detections and IMUs
         
@@ -96,9 +97,10 @@ class IotaEnv(gym.Env):
         '''
         Simple Step function
         '''
+        
         reward = 0
         docks = np.zeros((self.n,self.n)) - np.eye(self.n)                      ## disabling docking to reduce complexity
-        if self.low_control:
+        if False:
             for i,(act,iota) in enumerate(zip(action,self.iotas)):
                 for j,dock in enumerate(docks[i,:]):
                     if dock>=1:
@@ -110,6 +112,7 @@ class IotaEnv(gym.Env):
                 p.stepSimulation(self.pClient)
         else:
             for i,(pos,iota) in enumerate(zip(action,self.iotas)):
+                #print(pos, iota)
                 iota.set_point(pos)
                 for j,dock in enumerate(docks[i,:]):
                     if dock>=1:
@@ -120,11 +123,15 @@ class IotaEnv(gym.Env):
             final = False
             while not final:
                 final = True
-                for iota in self.iotas:
+                for i, iota in enumerate(self.iotas):
+                    #print("start of plan",i)
                     vec = iota.plan()
-                    final = final and iota.control(vec)
-                for i in range(5):
-                    p.stepSimulation(self.pClient)
+                    #print("start of control", vec)
+                    final = iota.control(vec) and final
+                    for _ in range(1):
+                        p.stepSimulation()
+                #time.sleep(0.001)
+                #p.stepSimulation(self.pClient)
         object_pos = p.getBasePositionAndOrientation(self.cube, self.pClient)[0]
         reward += -sum(abs(object_pos[i] - self.target_pos[i]) for i in range(3))
         observation = []

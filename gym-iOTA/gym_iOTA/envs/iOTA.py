@@ -10,8 +10,8 @@ class iOTA():
     l_wheels = [15, 19]     ## Joint ids of lower left wheels
     r_wheels = [17, 21]     ## Joint ids of lower right wheels
     docks = [25, 11]        ## Joint ids of docking plates
-    max_vel = 10            ## This is the maximum velocity a motor can rotate
-    min_vel = 1             ## This is the minimum velocity a motor can rotate
+    max_vel = 3             ## This is the maximum velocity a motor can rotate
+    min_vel = 0.1           ## This is the minimum velocity a motor can rotate
     motor_force = 10        ## This is the maximum force a motor can apply
     servo_force = 10        ## This is the maximum force a servo can apply
     dock_encoders = [0,0]   ## This stores the position of servo joint, similar to the real model of a servo
@@ -34,7 +34,7 @@ class iOTA():
             theta += np.pi
         orie = p.getQuaternionFromEuler((0,0,theta))            ## This is to align the bot to the initialized velocity vector
         basePosition = position or self.init_pos()              ## This is so that it can be respawned in a desired location as well.
-        self.id = p.loadURDF(path,
+        self.base_id = p.loadURDF(path,
                             basePosition=basePosition,
                             baseOrientation=orie,
                             physicsClientId=self.pClient)       ## Spawning it with the given parameters
@@ -57,14 +57,14 @@ class iOTA():
         '''
         return [self.arena_x*(rnd()-0.5)/0.5,
                 self.arena_y*(rnd()-0.5)/0.5,
-                0.001
+                0.1
                 ]
 
     def dist(self, target):
         '''
         Simple function to fetch distance of the bot from a given target point
         '''
-        pos = p.getBasePositionAndOrientation(self.id, physicsClientId=self.pClient)[0]
+        pos = p.getBasePositionAndOrientation(self.base_id, physicsClientId=self.pClient)[0]
         return sqrt((target[0]-pos[0])**2 + (target[1]-pos[1])**2)
 
     def low_control(self,vel_arr):
@@ -74,7 +74,7 @@ class iOTA():
         '''
         for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):               ## Iterating over wheels
             for j,wheel in enumerate(wheel_set):
-                p.setJointMotorControl2(self.id,
+                p.setJointMotorControl2(self.base_id,
                                         wheel,
                                         controlMode=p.VELOCITY_CONTROL,
                                         targetVelocity=self.signum_fn(vel_arr[ i + 2*j ] or vel_arr[ i ]),
@@ -86,7 +86,8 @@ class iOTA():
         '''
         Low level Control algorithm which works on proportional drive with R and theta as there state parameters, it takes in the desired Velocity vector
         '''
-        orie = p.getBasePositionAndOrientation(self.id, self.pClient)[1]
+        
+        orie = p.getBasePositionAndOrientation(self.base_id, self.pClient)[1]
         yaw = p.getEulerFromQuaternion(orie)[2]
         set_vec = np.arctan((vel_vec[1]+1e-8)/(vel_vec[0]+1e-8))
         if vel_vec[0]<0:
@@ -95,18 +96,20 @@ class iOTA():
         #print(set_vec, yaw)
         theta = set_vec - yaw                                                       ## The amount of angle to be rotated
         ## Please REMEMBER the orientation is inverse hence the sign is inversed
+        r = self.signum_fn(r)
         for_vec = [-np.cos(theta)*r, -np.cos(theta)*r]                                ## Components of Velocity - Forward
         rot_vec = [np.sin(theta)*r, -np.sin(theta)*r]                               ## Components of Velocity - Rotate
+        #print(self.base_id,for_vec[0]+rot_vec[0], for_vec[1]+rot_vec[1])
         for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):               ## Iterating over wheels
             for wheel in wheel_set:
-                p.setJointMotorControl2(self.id,
+                p.setJointMotorControl2(self.base_id,
                                         wheel,
                                         controlMode=p.VELOCITY_CONTROL,
                                         targetVelocity=for_vec[i]+rot_vec[i],
-                                        force=100,
+                                        force=1000,
                                         physicsClientId=self.pClient)               ## Applying torque
         self.vel = vel_vec
-
+        # p.stepSimulation(self.pClient)
         if (abs(for_vec[0]+rot_vec[0])+abs(for_vec[1]+rot_vec[1])) < self.__err:    ## check to stop the control algorithm
             return True
         else:
@@ -131,7 +134,7 @@ class iOTA():
         '''
         This simply returns position of the bot using the pybullet api but other computer vision technique could be inculcated in a similar fashion with IMUs
         '''
-        return p.getBasePositionAndOrientation(self.id, self.pClient)
+        return p.getBasePositionAndOrientation(self.base_id, self.pClient)
 
     def signum_fn(self,val):
         '''
@@ -164,7 +167,7 @@ class iOTA():
             theta += np.pi
         orie = p.getQuaternionFromEuler((0,0,theta))            ## New Orientation
         basePosition = position or self.init_pos()              ## Spawns at a given place if passed
-        p.resetBasePositionAndOrientation(bodyUniqueId=self.id,
+        p.resetBasePositionAndOrientation(bodyUniqueId=self.base_id,
                                           posObj=self.init_pos(),
                                           ornObj=orie,
                                           physicsClientId=self.pClient)
@@ -175,14 +178,14 @@ class iOTA():
         '''
         self.dock_encoders[dock_id] = angle                     ## This should not be done but in case of asynchoronous control its helpful
         while True:
-            curr = p.getJointState(self.id,
+            curr = p.getJointState(self.base_id,
                                    self.docks[dock_id],
                                    self.pClient)[0]             ## Returns the joint position that is the angle rotated
             vel = 10*(angle - curr)                             ## Simple Proportional control
             if vel < 0.05:
                 self.dock_encoders[dock_id] = curr
                 break
-            p.setJointMotorControl2(bodyUniqueId=self.id,
+            p.setJointMotorControl2(bodyUniqueId=self.base_id,
                                     jointIndex=self.docks[dock_id],
                                     controlMode=p.VELOCITY_CONTROL,
                                     targetVelocity=vel,
@@ -203,8 +206,8 @@ class iOTA():
             ind = None
         finally:
             if ind is not None:
-                raise Exception(str(self.id)+" and "+str(other.id)+"has a Connection before itself")
-                # print(self.id, "->", other.id, "connection exists, redeclaraction!!")
+                raise Exception(str(self.base_id)+" and "+str(other.id)+"has a Connection before itself")
+                # print(self.base_id, "->", other.id, "connection exists, redeclaraction!!")
                 return -1
         other.dockees.append(self)                              ## Useful to make graph of all nodes
         self.dockees.append(other)                              ## Useful to make graph of all nodes
@@ -217,7 +220,7 @@ class iOTA():
         other_id = -1
         for i in range(2):
             for j in range(2):
-                temp_Self = p.getLinkState(self.id,
+                temp_Self = p.getLinkState(self.base_id,
                                self.docks[i],
                                )[0]
                 temp_other = p.getLinkState(other.id,
@@ -249,7 +252,7 @@ class iOTA():
         if sum([abs(diff12[i]) for i in range(3)]) > 0.01:
             raise Exception('Please make the bots to come closer before docking')
 
-        cid = p.createConstraint(parentBodyUniqueId=self.id,
+        cid = p.createConstraint(parentBodyUniqueId=self.base_id,
                                  parentLinkIndex=-1,            ## THIS SHOULD BE DOCK PLATE INDEX
                                  childBodyUniqueId=other.id,
                                  childLinkIndex=-1,             ## THIS SHOULD BE DOCK PLATE INDEX
@@ -271,8 +274,8 @@ class iOTA():
         try:
             ind = self.dockees.index(other)
         except:
-            raise Exception(str(self.id)+" "+str(other.id )+", These two modules have not been docked before")
-            # print(self.id, other.id, "Are not docked before")
+            raise Exception(str(self.base_id)+" "+str(other.id )+", These two modules have not been docked before")
+            # print(self.base_id, other.id, "Are not docked before")
         finally:
             if ind is not None:
                 cid = self.constraints.pop(ind)
@@ -287,7 +290,7 @@ class iOTA():
         '''
         for i,wheel_set in enumerate([self.r_wheels, self.l_wheels]):
             for wheel in wheel_set:
-                p.setJointMotorControl2(self.id,
+                p.setJointMotorControl2(self.base_id,
                                         wheel,
                                         controlMode=p.VELOCITY_CONTROL,
                                         targetVelocity=0,
@@ -300,7 +303,7 @@ class iOTA():
         '''
         for dockee in self.dockees:
             res = self - dockee                                 ## This would undock all the relations and remove on all sides
-        p.removeBody(self.id,
+        p.removeBody(self.base_id,
                      self.pClient
                      )
 
