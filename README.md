@@ -12,6 +12,11 @@ This is a cost effective modular robot platform developed by us, it contains two
 
 For more info on the bot hardware and designs please visit this page [here](/hardware_Designs) or [doc](https://onedrive.live.com/view.aspx?resid=3B7945FE006E67D!4175&ithint=file%2cdocx&authkey=!AA_ziTqK6vYo80c)
 <br/><br/>
+
+## Approach
+An Heirarchial Reinforcement Learning Based approach for planning motion, will coordinating Multiple Robots 
+![](ModularBot.png)
+
 ## Installation
 To install the latest features one could clone and install like so.
 ```bash
@@ -67,7 +72,6 @@ The objective of the environment is to use these robots to push the box from one
 The Reward function is defined as the negetive of the distance between the position of the cube to the end point which is on the other side of the arena.
 <p align="center"><a href="https://www.codecogs.com/eqnedit.php?latex=\dpi{150}&space;\bg_white&space;\fn_phv&space;\large&space;R&space;=&space;-&space;\sum&space;_{axes}&space;(Cube_{pos}&space;-&space;End_{pos})^{2}" target="_blank"><img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\bg_white&space;\fn_phv&space;\large&space;R&space;=&space;-&space;\sum&space;_{axes}&space;(Cube_{pos}&space;-&space;End_{pos})^{2}" title="\large R = - \sum _{axes} (Cube_{pos} - End_{pos})^{2}" /></a>
 </p>
-
 
 
 
